@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anas Store v2 - Ultra Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+        }
+        .animated-gradient {
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #334155, #475569);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .modal-content {
+            animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes slide-up {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .product-card-hover-effect {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card-hover-effect:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3); /* Blue glow */
+        }
+        .btn-premium {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-premium:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+    </style>
+</head>
+<body class="text-gray-200 antialiased">
+
+    <!-- Animated Background -->
+    <div class="animated-gradient fixed top-0 left-0 w-full h-full -z-10"></div>
+
+    <!-- Header / Navbar -->
+    <header class="glass-effect sticky top-0 z-40">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <h1 class="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                        Anas Store
+                    </h1>
+                </div>
+                <div class="flex-1 max-w-xl mx-4">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        </div>
+                        <input id="search-bar" type="text" class="block w-full bg-slate-800/50 border border-slate-700 rounded-full py-2.5 pl-12 pr-4 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Find your next gadget...">
+                    </div>
+                </div>
+                <button id="about-btn" class="btn-premium bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2 px-5 rounded-full shadow-lg">About</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Product Grid -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Products will be injected here -->
+        </div>
+        <div id="no-results" class="hidden text-center py-20">
+            <h2 class="text-3xl font-bold text-gray-400">No Gadgets Found</h2>
+            <p class="text-gray-500 mt-2">Try a different search term.</p>
+        </div>
+    </main>
+
+    <!-- Modals Container -->
+
+    <!-- Product Details Modal -->
+    <div id="details-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center hidden p-4">
+        <div class="modal-content glass-effect rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 md:p-8 relative grid md:grid-cols-2 gap-8">
+                <button id="close-details-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+                <div>
+                    <img id="detail-image" src="" alt="Product Image" class="w-full rounded-xl object-cover shadow-lg">
+                </div>
+                <div class="flex flex-col">
+                    <h2 id="detail-title" class="text-4xl font-extrabold tracking-tight mb-3"></h2>
+                    <p id="detail-price" class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mb-6"></p>
+                    <p id="detail-description" class="text-gray-300 leading-relaxed mb-8 flex-grow"></p>
+                    <button id="detail-buy-now-btn" class="btn-premium w-full bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold py-4 px-6 rounded-lg text-lg shadow-xl mt-auto">Buy Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Other Modals (About, Login, Admin, Payment, etc.) -->
+    <!-- About Modal -->
+    <div id="about-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center hidden p-4">
+        <div class="modal-content glass-effect rounded-2xl shadow-xl p-8 max-w-sm w-full">
+            <h2 class="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">About</h2>
+            <div class="space-y-3 text-gray-300">
+                <p><strong class="font-semibold text-gray-100">Developer:</strong> MMH ANAS</p>
+                <p><strong class="font-semibold text-gray-100">Contact:</strong> mmhanas14@gmail.com</p>
+                <div class="flex items-center space-x-2">
+                    <strong class="font-semibold text-gray-100">Version:</strong>
+                    <span id="version-number" class="cursor-pointer select-none text-blue-400" title="Click 7 times!">1.0.0 Beta</span>
+                </div>
+            </div>
+            <button id="close-about-modal" class="btn-premium mt-8 w-full bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold py-2.5 rounded-lg">Close</button>
+        </div>
+    </div>
+
+    <!-- Login, Admin, Payment, and Processing Modals remain similar in structure but styled with glass-effect -->
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center hidden p-4">
+        <div class="modal-content glass-effect rounded-2xl shadow-xl p-8 max-w-sm w-full">
+            <h2 class="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+            <form id="login-form" class="space-y-4">
+                <input type="text" id="username" placeholder="Username" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" id="password" placeholder="Password" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p id="login-error" class="text-red-400 text-sm text-center hidden">Invalid credentials.</p>
+                <div class="flex items-center justify-between pt-4">
+                    <button id="close-login-modal" type="button" class="btn-premium bg-slate-600 text-white font-semibold py-2 px-5 rounded-lg">Cancel</button>
+                    <button type="submit" class="btn-premium bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold py-2 px-5 rounded-lg">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center hidden p-4">
+        <div class="modal-content glass-effect rounded-2xl shadow-xl p-8 max-w-md w-full">
+             <h2 class="text-2xl font-bold mb-6 text-center">Add New Product</h2>
+            <form id="add-product-form" class="space-y-4">
+                <input type="text" id="product-name" placeholder="Product Name" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg" required>
+                <input type="number" id="product-price" placeholder="Product Price (TK)" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg" required>
+                <textarea id="product-description" placeholder="Product Description" rows="3" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg" required></textarea>
+                <input type="file" id="product-image" accept="image/*" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-900/50 file:text-indigo-300 hover:file:bg-indigo-900" required>
+                <img id="image-preview" src="#" alt="Preview" class="hidden max-h-32 mx-auto rounded-lg"/>
+                <div class="pt-6 flex justify-between">
+                    <button id="close-admin-modal" type="button" class="btn-premium bg-slate-600 text-white font-semibold py-2 px-5 rounded-lg">Cancel</button>
+                    <button type="submit" class="btn-premium bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2 px-5 rounded-lg">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Payment Modal -->
+     <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center hidden p-4">
+        <div class="modal-content glass-effect rounded-2xl shadow-xl p-8 max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-2">Payment Details</h2>
+            <p id="payment-product-name" class="text-gray-400 mb-6"></p>
+            <form id="payment-form" class="space-y-4">
+                <input type="text" placeholder="Card Number" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg" required>
+                <div class="flex space-x-4">
+                    <input type="text" placeholder="MM / YY" class="block w-1/2 px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg" required>
+                    <input type="text" placeholder="CVC" class="block w-1/2 px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg" required>
+                </div>
+                <input type="text" placeholder="Name on Card" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg" required>
+                <div class="pt-6 flex justify-between">
+                     <button id="close-payment-modal" type="button" class="btn-premium bg-slate-600 text-white font-semibold py-2 px-5 rounded-lg">Cancel</button>
+                    <button type="submit" class="btn-premium bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold py-2 px-5 rounded-lg">Confirm Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Processing Modal -->
+    <div id="processing-modal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden p-4">
+        <div id="processing-content" class="text-center p-8">
+            <!-- Content changes dynamically via JS -->
+        </div>
+    </div>
+    
+    <!-- Floating Admin Button -->
+    <button id="open-admin-panel-btn" class="hidden fixed bottom-8 right-8 btn-premium bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full p-4 shadow-2xl z-30">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+    </button>
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             let products = [
+                { id: 1, name: 'Google Pixel 10 Pro XL', image: 'https://placehold.co/600x600/0ea5e9/FFFFFF?text=Pixel+10\\nPro+XL&font=inter', price: 152908, description: 'Experience the future of photography with the Pixel 10 Pro XL. Featuring a state-of-the-art camera system, blazing-fast performance, and an all-day adaptive battery.' },
+                { id: 2, name: 'Samsung Galaxy S25 Ultra', image: 'https://placehold.co/600x600/8b5cf6/FFFFFF?text=Galaxy+S25\\nUltra&font=inter', price: 230900, description: 'The pinnacle of smartphone innovation. The Galaxy S25 Ultra boasts a stunning dynamic display, pro-grade cameras with unparalleled zoom, and the integrated S Pen for ultimate productivity.' },
+                { id: 3, name: 'Google Pixel 10 Pro Fold', image: 'https://placehold.co/600x600/ef4444/FFFFFF?text=Pixel+10\\nPro+Fold&font=inter', price: 218000, description: 'Unfold a new world of possibilities. A versatile device that combines the utility of a smartphone with the immersive experience of a tablet, powered by Google\'s intelligence.' },
+                { id: 4, name: 'Samsung Galaxy Z Fold 7', image: 'https://placehold.co/600x600/22c55e/FFFFFF?text=Galaxy+Z\\nFold+7&font=inter', price: 231000, description: 'Master multitasking with the Galaxy Z Fold 7. Its expansive main screen, optimized for multiple apps, and durable design make it the ultimate device for work and play.' },
+                { id: 5, name: 'Google Pixel Watch 4 Pro', image: 'https://placehold.co/600x600/f59e0b/FFFFFF?text=Pixel+Watch\\n4+Pro&font=inter', price: 62000, description: 'Elegance meets intelligence. Track your health and fitness with Fitbit integration, get help from Google Assistant, and stay connected, all from your wrist.' },
+                { id: 6, name: 'Google Pixel Buds Pro 3', image: 'https://placehold.co/600x600/a855f7/FFFFFF?text=Pixel+Buds\\nPro+3&font=inter', price: 60000, description: 'Immersive sound, tailored for you. With silent seal active noise cancellation and a custom-designed processor, every note sounds richer and clearer.' },
+            ];
+
+            // State
+            let isAdmin = false;
+            let versionClickCount = 0;
+            let versionClickTimer = null;
+            let currentProductId = null;
+
+            // DOM Elements
+            const productGrid = document.getElementById('product-grid');
+            const searchBar = document.getElementById('search-bar');
+            
+            // Modals
+            const allModals = document.querySelectorAll('.fixed.inset-0');
+            const detailsModal = document.getElementById('details-modal');
+            const paymentModal = document.getElementById('payment-modal');
+            const processingModal = document.getElementById('processing-modal');
+            
+            // --- Core Functions ---
+
+            const renderProducts = (productsToRender) => {
+                productGrid.innerHTML = '';
+                document.getElementById('no-results').classList.toggle('hidden', productsToRender.length > 0);
+
+                productsToRender.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card-hover-effect glass-effect rounded-2xl overflow-hidden cursor-pointer flex flex-col group';
+                    productCard.dataset.id = product.id;
+                    productCard.innerHTML = `
+                        <div class="overflow-hidden">
+                             <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold mb-2 flex-grow">${product.name}</h3>
+                            <div class="flex items-center justify-between mt-4">
+                                <p class="text-2xl font-semibold text-blue-400">${product.price.toLocaleString('en-IN', { style: 'currency', currency: 'BDT', minimumFractionDigits: 0 })}</p>
+                                <span class="text-xs font-bold uppercase bg-blue-500/20 text-blue-300 py-1 px-3 rounded-full">View</span>
+                            </div>
+                        </div>
+                    `;
+                    productGrid.appendChild(productCard);
+                });
+            };
+
+            const toggleModal = (modalElement, show) => {
+                if (show) {
+                    modalElement.classList.remove('hidden');
+                } else {
+                    // We don't hide immediately to allow for animations if any
+                    setTimeout(() => modalElement.classList.add('hidden'), 500);
+                }
+            };
+            
+            const openDetailsModal = (productId) => {
+                const product = products.find(p => p.id === productId);
+                if (!product) return;
+                currentProductId = productId;
+                document.getElementById('detail-image').src = product.image;
+                document.getElementById('detail-title').textContent = product.name;
+                document.getElementById('detail-price').textContent = product.price.toLocaleString('en-IN', { style: 'currency', currency: 'BDT', minimumFractionDigits: 0 });
+                document.getElementById('detail-description').textContent = product.description;
+                toggleModal(detailsModal, true);
+            };
+            
+            // --- Event Delegation & Handlers ---
+            
+            productGrid.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card-hover-effect');
+                if (card) {
+                    openDetailsModal(parseInt(card.dataset.id));
+                }
+            });
+            
+            document.getElementById('detail-buy-now-btn').addEventListener('click', () => {
+                const product = products.find(p => p.id === currentProductId);
+                document.getElementById('payment-product-name').textContent = `Purchasing: ${product.name}`;
+                toggleModal(detailsModal, false);
+                setTimeout(() => toggleModal(paymentModal, true), 300);
+            });
+            
+            document.getElementById('payment-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                toggleModal(paymentModal, false);
+                const processingContent = document.getElementById('processing-content');
+                
+                setTimeout(() => {
+                    processingContent.innerHTML = `
+                        <div class="flex justify-center items-center mb-4">
+                            <svg class="animate-spin h-12 w-12 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        </div>
+                        <h2 class="text-3xl font-bold">Processing Your Order...</h2>
+                        <p class="text-gray-400">Please wait.</p>`;
+                    toggleModal(processingModal, true);
+
+                    setTimeout(() => {
+                         processingContent.innerHTML = `
+                             <div class="flex justify-center items-center mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                            </div>
+                            <h2 class="text-3xl font-bold">Order Placed Successfully!</h2>
+                            <p class="text-gray-400">Thank you for shopping with us.</p>`;
+
+                        setTimeout(() => toggleModal(processingModal, false), 2500);
+                    }, 3000);
+                }, 300);
+            });
+
+            document.getElementById('add-product-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('product-name').value;
+                const price = parseFloat(document.getElementById('product-price').value);
+                const description = document.getElementById('product-description').value;
+                const imageFile = document.getElementById('product-image').files[0];
+
+                if (name && price && description && imageFile) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const newProduct = {
+                            id: Date.now(), // More unique ID
+                            name, price, description, image: event.target.result
+                        };
+                        products.unshift(newProduct);
+                        renderProducts(products);
+                        e.target.reset();
+                        document.getElementById('image-preview').classList.add('hidden');
+                        toggleModal(document.getElementById('admin-modal'), false);
+                    };
+                    reader.readAsDataURL(imageFile);
+                }
+            });
+            
+            // --- General Listeners ---
+            searchBar.addEventListener('input', () => {
+                const searchTerm = searchBar.value.toLowerCase();
+                const filtered = products.filter(p => p.name.toLowerCase().includes(searchTerm));
+                renderProducts(filtered);
+            });
+            
+            document.getElementById('version-number').addEventListener('click', () => {
+                versionClickCount++;
+                clearTimeout(versionClickTimer);
+                versionClickTimer = setTimeout(() => { versionClickCount = 0; }, 1500);
+                if (versionClickCount === 7) {
+                    versionClickCount = 0;
+                    clearTimeout(versionClickTimer);
+                    toggleModal(document.getElementById('about-modal'), false);
+                    setTimeout(() => toggleModal(document.getElementById('login-modal'), true), 300);
+                }
+            });
+
+            document.getElementById('login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (e.target.username.value === 'mmhanas14@gmail.com' && e.target.password.value === 'ANas@2011') {
+                    isAdmin = true;
+                    document.getElementById('login-error').classList.add('hidden');
+                    e.target.reset();
+                    toggleModal(document.getElementById('login-modal'), false);
+                    document.getElementById('open-admin-panel-btn').classList.remove('hidden');
+                } else {
+                    document.getElementById('login-error').classList.remove('hidden');
+                }
+            });
+
+             document.getElementById('product-image').addEventListener('change', function(){
+                if (this.files[0]) {
+                    const reader = new FileReader();
+                    const preview = document.getElementById('image-preview');
+                    reader.onload = (e) => {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            // Universal close buttons for modals
+            const closeButtons = [
+                'close-details-modal', 'close-about-modal', 'close-login-modal',
+                'close-admin-modal', 'close-payment-modal'
+            ];
+            closeButtons.forEach(id => {
+                document.getElementById(id)?.addEventListener('click', (e) => {
+                    toggleModal(e.target.closest('.fixed.inset-0'), false);
+                });
+            });
+
+            document.getElementById('open-admin-panel-btn').addEventListener('click', () => toggleModal(document.getElementById('admin-modal'), true));
+            document.getElementById('about-btn').addEventListener('click', () => toggleModal(document.getElementById('about-modal'), true));
+
+            // Initial Render
+            renderProducts(products);
+        });
+    </script>
+</body>
+</html>
+
+
